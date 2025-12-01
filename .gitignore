@@ -1,0 +1,8 @@
+# تجاهل هذه الملفات الضخمة
+node_modules/
+venv/
+__pycache__/
+.env
+dist/
+build/
+.DS_Store
