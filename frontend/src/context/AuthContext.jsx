@@ -1,57 +1,54 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+// 1. استيراد الرابط الديناميكي
+import { BASE_URL } from '../config';
 
-// 1. إنشاء السياق
+// 2. إنشاء السياق
 const AuthContext = createContext(null);
 
-// 2. إنشاء المزوّد (Provider)
+// 3. إنشاء المزوّد (Provider)
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
     token: localStorage.getItem('token') || null,
-    user: null,         // سيبقى null في البداية
-    isLoading: true,    // حالة جديدة لتتبع التحميل الأولي
+    user: null,
+    isLoading: true,
   });
 
-  // 3. التأثير (Effect) الذي سيتم تشغيله عند بدء التطبيق أو تغير التوكن
+  // 4. التأثير (Effect)
   useEffect(() => {
     const fetchUser = async () => {
-      // إذا لم يكن هناك توكن، نتوقف عن التحميل ونؤكد أن لا يوجد مستخدم
       if (!authState.token) {
         setAuthState({ token: null, user: null, isLoading: false });
         return;
       }
 
       try {
-        // إذا كان هناك توكن، نحاول جلب بيانات المستخدم
+        // 5. استخدام BASE_URL
         const apiClient = axios.create({
-          baseURL: 'http://localhost:8000',
+          baseURL: BASE_URL,
           headers: { 'Authorization': `Bearer ${authState.token}` }
         });
+        
         const response = await apiClient.get('/users/me');
         
-        // عند النجاح، نحدّث الحالة بالتوكن والمستخدم، ونوقف التحميل
         setAuthState({ token: authState.token, user: response.data, isLoading: false });
 
       } catch (error) {
         console.error("Auth token is invalid, logging out.", error);
-        // إذا فشل الطلب (التوكن غير صالح)، نزيل التوكن ونسجل الخروج
         localStorage.removeItem('token');
         setAuthState({ token: null, user: null, isLoading: false });
       }
     };
 
     fetchUser();
-  }, [authState.token]); // هذا التأثير يعتمد فقط على التوكن
+  }, [authState.token]);
 
-  // 4. دوال لتعديل الحالة من المكونات الأخرى
   const setToken = (token) => {
     if (token) {
       localStorage.setItem('token', token);
-      // فقط نحدّث التوكن، والـ useEffect سيهتم بالباقي
       setAuthState(prev => ({ ...prev, token: token }));
     } else {
       localStorage.removeItem('token');
-      // نحدّث كل شيء إلى null
       setAuthState({ token: null, user: null, isLoading: false });
     }
   };
@@ -60,7 +57,6 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
   
-  // 5. تجميع القيمة التي سيوفرها السياق
   const value = {
     token: authState.token,
     user: authState.user,
@@ -71,13 +67,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {/* لا نعرض التطبيق إلا بعد انتهاء التحميل الأولي */}
       {!authState.isLoading && children}
     </AuthContext.Provider>
   );
 };
 
-// 6. الخطاف المخصص للوصول إلى السياق
+// ---------------------------------------------------------
+// ---------------------------------------------------------
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === null) {

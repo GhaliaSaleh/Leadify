@@ -14,8 +14,14 @@ def send_asset_email(to_email: str, asset_name: str, asset_path: str):
     message["From"] = sender_email
     message["To"] = to_email
 
-    # Generate the download link
-    download_link = f"http://localhost:8000/{asset_path}"
+    # ---------------------------------------------------------
+    # التصحيح هنا: استخدام رابط السيرفر الحي (Render) بدلاً من Localhost
+    # ---------------------------------------------------------
+    # هذا هو الرابط الخاص بمشروعك الذي حصلنا عليه
+    base_url = "https://leadify-fkt3.onrender.com"
+    
+    # نقوم بتركيب الرابط الكامل
+    download_link = f"{base_url}/{asset_path}"
 
     # Create the HTML part of the message
     html = f"""

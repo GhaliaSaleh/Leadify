@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+// ---------------------------------------------------------
+// 1. استيراد الرابط الديناميكي
+// ---------------------------------------------------------
+import { BASE_URL } from '../config';
 
 import { 
   Box, Button, FormControl, FormLabel, Input, Select, Heading, Alert, AlertIcon, VStack,
   NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper,
-  useToast // استيراد useToast
+  useToast 
 } from '@chakra-ui/react';
 
 function CreateCampaignForm({ assets, onSuccess, isDisabled }) {
@@ -17,7 +21,7 @@ function CreateCampaignForm({ assets, onSuccess, isDisabled }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { token } = useAuth();
-  const toast = useToast(); // تعريف toast
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +32,14 @@ function CreateCampaignForm({ assets, onSuccess, isDisabled }) {
     setError('');
     setIsSubmitting(true);
     try {
-      const apiClient = axios.create({ baseURL: 'http://localhost:8000', headers: { 'Authorization': `Bearer ${token}` } });
+      // ---------------------------------------------------------
+      // 2. استخدام الرابط الحي هنا
+      // ---------------------------------------------------------
+      const apiClient = axios.create({ 
+          baseURL: BASE_URL, // <--- التغيير هنا
+          headers: { 'Authorization': `Bearer ${token}` } 
+      });
+      
       const response = await apiClient.post('/campaigns/', {
         name: name,
         asset_id: parseInt(selectedAssetId),
@@ -41,7 +52,6 @@ function CreateCampaignForm({ assets, onSuccess, isDisabled }) {
         }
       });
       
-      // استخدام toast بدلاً من alert
       toast({
         title: 'تم إنشاء الحملة بنجاح!',
         description: "يمكنك الآن تخصيصها بشكل أكبر.",
@@ -51,7 +61,6 @@ function CreateCampaignForm({ assets, onSuccess, isDisabled }) {
         position: 'top'
       });
       
-      // إعادة ضبط الحالات
       setName('');
       setSelectedAssetId('');
       setDelay(3);

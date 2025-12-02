@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+// ---------------------------------------------------------
+// 1. استيراد الرابط الديناميكي من ملف الإعدادات
+// ---------------------------------------------------------
+import { BASE_URL } from '../config'; 
+
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   Button, FormControl, FormLabel, Input, NumberInput, NumberInputField, NumberInputStepper,
-  NumberIncrementStepper, NumberDecrementStepper, VStack, useToast // استيراد useToast
+  NumberIncrementStepper, NumberDecrementStepper, VStack, useToast
 } from '@chakra-ui/react';
 
 function CampaignEditor({ campaign, isOpen, onClose, onUpdate }) {
   const [settings, setSettings] = useState({ title: '', button_text: '', placeholder_text: '', delay_seconds: 0, button_color: '#000000' });
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuth();
-  const toast = useToast(); // تعريف toast
+  const toast = useToast();
 
   useEffect(() => {
     const defaultSettings = { title: '', button_text: '', placeholder_text: '', delay_seconds: 0, button_color: '#4263EB' };
@@ -33,7 +38,14 @@ function CampaignEditor({ campaign, isOpen, onClose, onUpdate }) {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const apiClient = axios.create({ baseURL: 'http://localhost:8000', headers: { 'Authorization': `Bearer ${token}` } });
+      // ---------------------------------------------------------
+      // 2. التصحيح هنا: استخدام BASE_URL بدلاً من الرابط الثابت
+      // ---------------------------------------------------------
+      const apiClient = axios.create({ 
+          baseURL: BASE_URL, // <--- هنا التغيير المهم
+          headers: { 'Authorization': `Bearer ${token}` } 
+      });
+      
       const response = await apiClient.put(`/campaigns/${campaign.id}`, { settings });
       onUpdate(response.data);
       toast({ title: "تم حفظ الإعدادات بنجاح.", status: "success", duration: 3000, isClosable: true, position: "top" });

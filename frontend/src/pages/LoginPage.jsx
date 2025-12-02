@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link as RouterLink } from 'react-router-dom'; // 1. استيراد وإعادة تسمية
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+// ---------------------------------------------------------
+// 1. استيراد الرابط الديناميكي
+// ---------------------------------------------------------
+import { BASE_URL } from '../config';
 
-// 2. تحديث قائمة استيراد Chakra UI
 import {
   Box,
   Button,
@@ -14,8 +17,8 @@ import {
   Alert,
   AlertIcon,
   useToast,
-  Text, // إضافة Text
-  Link    // إضافة Link (سيتم استخدامه كـ ChakraLink)
+  Text,
+  Link
 } from '@chakra-ui/react';
 
 
@@ -26,7 +29,7 @@ function LoginPage() {
 
   const { setToken } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast(); // 2. تعريف toast
+  const toast = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,8 +42,11 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
+      // ---------------------------------------------------------
+      // 2. استخدام الرابط الحي (BASE_URL) هنا
+      // ---------------------------------------------------------
       const response = await axios.post(
-        'http://localhost:8000/login',
+        `${BASE_URL}/login`, // <--- تم التصحيح
         new URLSearchParams(formData),
         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
       );
@@ -48,7 +54,6 @@ function LoginPage() {
       const accessToken = response.data.access_token;
       setToken(accessToken);
       
-      // 3. استخدام toast بدلاً من alert
       toast({
         title: "تم تسجيل الدخول بنجاح.",
         description: "جاري توجيهك إلى لوحة التحكم.",
@@ -61,6 +66,7 @@ function LoginPage() {
       navigate('/');
 
     } catch (err) {
+      console.error(err);
       setError('فشل تسجيل الدخول. يرجى التحقق من البيانات.');
     } finally {
       setIsLoading(false);
@@ -96,7 +102,6 @@ function LoginPage() {
         </Button>
       </form>
 
-{/* --- هذا هو الجزء الجديد والمهم --- */}
       <Text mt={6} textAlign="center">
         ليس لديك حساب؟{' '}
         <Link as={RouterLink} to="/register" color="blue.500" fontWeight="bold">

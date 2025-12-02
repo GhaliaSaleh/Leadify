@@ -1,4 +1,8 @@
 (function() {
+    // --- 0. CONFIGURATION ---
+    // هذا هو رابط الباك-إند الحي الخاص بك على Render
+    const BASE_API_URL = "https://leadify-fkt3.onrender.com";
+
     // --- 1. BOOTSTRAPPING & SETUP ---
     if (window.directWidgetLoaded) return;
     window.directWidgetLoaded = true;
@@ -20,7 +24,8 @@
 
 
     // --- 2. API CALL TO FETCH SETTINGS ---
-const apiUrl = `http://localhost:8000/public/campaigns/${campaignId}/settings?cache_bust=${new Date().getTime()}`;
+    // تصحيح الرابط هنا لاستخدام السيرفر الحي
+    const apiUrl = `${BASE_API_URL}/public/campaigns/${campaignId}/settings?cache_bust=${new Date().getTime()}`;
 
     fetch(apiUrl)
         .then(response => {
@@ -99,29 +104,27 @@ const apiUrl = `http://localhost:8000/public/campaigns/${campaignId}/settings?ca
             }
                 
            .direct-widget-modal button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    /* نستخدم متغير CSS هنا، مع قيمة احتياطية */
-    background-color: var(--widget-button-color, #4263EB); 
-    color: white;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s, filter 0.2s;
-}
+                width: 100%;
+                padding: 12px;
+                border: none;
+                background-color: var(--widget-button-color, #4263EB); 
+                color: white;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background-color 0.2s, filter 0.2s;
+            }
 
-.direct-widget-modal button[type="submit"]:hover {
-    /* نستخدم filter لتغميق اللون الديناميكي */
-    filter: brightness(90%);
-}
+            .direct-widget-modal button[type="submit"]:hover {
+                filter: brightness(90%);
+            }
 
-.direct-widget-modal button[type="submit"]:disabled {
-    background-color: #ccc; /* لون رمادي ثابت عند التعطيل */
-    filter: none;
-    cursor: not-allowed;
-}
+            .direct-widget-modal button[type="submit"]:disabled {
+                background-color: #ccc;
+                filter: none;
+                cursor: not-allowed;
+            }
             .direct-widget-close-btn {
                 position: absolute;
                 top: 15px;
@@ -151,14 +154,12 @@ const apiUrl = `http://localhost:8000/public/campaigns/${campaignId}/settings?ca
             <div style="padding: 0 30px 30px 30px;">
                 <form id="direct-widget-form">
                     <input type="email" name="email" placeholder="${settings.placeholder_text}" required />
-
-                 
-<button 
-    type="submit" 
-    style="--widget-button-color: ${settings.button_color || '#4263EB'};"
->
-    ${settings.button_text}
-</button>                    
+                    <button 
+                        type="submit" 
+                        style="--widget-button-color: ${settings.button_color || '#4263EB'};"
+                    >
+                        ${settings.button_text}
+                    </button>                    
                 </form>
             </div>
         `;
@@ -195,7 +196,8 @@ const apiUrl = `http://localhost:8000/public/campaigns/${campaignId}/settings?ca
             submitButton.disabled = true;
             submitButton.textContent = 'جاري الإرسال...';
 
-            fetch('http://localhost:8000/public/subscribe', {
+            // تصحيح الرابط هنا أيضاً لاستخدام السيرفر الحي
+            fetch(`${BASE_API_URL}/public/subscribe`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

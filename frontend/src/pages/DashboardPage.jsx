@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { Link as RouterLink } from "react-router-dom";
+// ---------------------------------------------------------
+// 1. استيراد الرابط الديناميكي
+// ---------------------------------------------------------
+import { BASE_URL } from '../config';
 
 // Chakra UI Imports
 import {
@@ -39,7 +43,10 @@ function DashboardPage() {
   // Memoized API client
   const apiClient = useCallback(() => {
     return axios.create({
-      baseURL: 'http://localhost:8000',
+      // ---------------------------------------------------------
+      // 2. استخدام الرابط الحي (BASE_URL) هنا
+      // ---------------------------------------------------------
+      baseURL: BASE_URL, 
       headers: { 'Authorization': `Bearer ${token}` }
     });
   }, [token]);
@@ -56,6 +63,7 @@ function DashboardPage() {
         setAssets(assetsRes.data);
         setCampaigns(campaignsRes.data);
       } catch (err) {
+        console.error(err)
         setError('فشل في جلب البيانات من الخادم.');
       }
     };
@@ -83,6 +91,7 @@ function DashboardPage() {
       const response = await apiClient().get(`/campaigns/${campaignId}/subscribers`);
       setVisibleSubscribers(prev => ({ ...prev, [campaignId]: response.data }));
     } catch (error) {
+      console.error(error)
       toast({ title: "فشل في جلب المشتركين.", status: "error", duration: 5000, isClosable: true, position: 'top' });
     }
   };
@@ -99,6 +108,7 @@ function DashboardPage() {
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
+      console.error(error)
       toast({ title: "فشل في تصدير القائمة.", status: "error", duration: 5000, isClosable: true, position: 'top' });
     }
   };

@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+// ---------------------------------------------------------
+// 1. استيراد الرابط الديناميكي
+// ---------------------------------------------------------
+import { BASE_URL } from '../config';
+
 import {
-  Box, Button, FormControl, FormLabel, Input, Heading, Alert, AlertIcon, VStack, useToast // 1. استيراد useToast
+  Box, Button, FormControl, FormLabel, Input, Heading, Alert, AlertIcon, VStack, useToast
 } from '@chakra-ui/react';
 
 function UploadAssetForm({ onUploadSuccess }) {
@@ -11,7 +16,7 @@ function UploadAssetForm({ onUploadSuccess }) {
   const [error, setError] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const { token } = useAuth();
-  const toast = useToast(); // 2. تعريف toast
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,12 +31,18 @@ function UploadAssetForm({ onUploadSuccess }) {
     formData.append('file', file);
 
     try {
-      const apiClient = axios.create({ baseURL: 'http://localhost:8000', headers: { 'Authorization': `Bearer ${token}` } });
+      // ---------------------------------------------------------
+      // 2. استخدام الرابط الحي (BASE_URL) هنا
+      // ---------------------------------------------------------
+      const apiClient = axios.create({ 
+          baseURL: BASE_URL, // <--- تم التصحيح
+          headers: { 'Authorization': `Bearer ${token}` } 
+      });
+      
       const response = await apiClient.post('/assets/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
-      // 3. استخدام toast بدلاً من alert
       toast({
         title: "تم الرفع بنجاح.",
         status: "success",
@@ -47,6 +58,7 @@ function UploadAssetForm({ onUploadSuccess }) {
         onUploadSuccess(response.data);
       }
     } catch (err) {
+    console.error(err); 
       setError('فشل في رفع الملف. حاول مرة أخرى.');
     } finally {
       setIsUploading(false);

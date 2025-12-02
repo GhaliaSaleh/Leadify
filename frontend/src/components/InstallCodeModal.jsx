@@ -11,11 +11,22 @@ function InstallCodeModal({ isOpen, onClose, campaignId }) {
     return null;
   }
 
-  const widgetCode = `<script src="http://localhost:5173/widget.js" data-campaign-id="${campaignId}" defer></script>`;
+ 
+  // ---------------------------------------------------------
+  const origin = window.location.origin;
+  
+  const widgetCode = `<script src="${origin}/widget.js" data-campaign-id="${campaignId}" defer></script>`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(widgetCode).then(() => {
-      toast({ title: "تم نسخ الكود!", status: "success", duration: 2000 });
+      toast({ 
+        title: "تم نسخ الكود!", 
+        description: "الصقه في موقعك ليعمل النظام فوراً.",
+        status: "success", 
+        duration: 3000,
+        isClosable: true,
+        position: 'top'
+      });
     });
   };
 
