@@ -5,7 +5,7 @@ from pydantic import EmailStr
 
 from . import models, schemas
 from .database import get_db
-from . import email as email_service # استيراد خدمة الإيميل
+from . import email as email_service
 
 router = APIRouter(
     prefix="/public",
@@ -28,15 +28,14 @@ def get_campaign_settings(campaign_id: int, db: Session = Depends(get_db)):
     return schemas.CampaignSettings()
 
 
-
 class SubscriptionRequest(schemas.BaseModel):
     email: EmailStr
     campaign_id: int
 
 @router.post("/subscribe", status_code=status.HTTP_204_NO_CONTENT)
 def subscribe_to_campaign(
-  subscription: SubscriptionRequest,
-    background_tasks: BackgroundTasks,
+    subscription: SubscriptionRequest,
+    background_tasks: BackgroundTasks, 
     db: Session = Depends(get_db)
 ):
     # 1. التحقق من وجود الحملة ونشاطها
@@ -48,25 +47,25 @@ def subscribe_to_campaign(
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found or is not active")
 
-    # 2. التحقق مما إذا كان الإيميل مسجلاً من قبل في هذه الحملة
+    # 2. التحقق مما إذا كان الإيميل مسجلاً من قبل
     existing_subscriber = db.query(models.Subscriber).filter(
         models.Subscriber.campaign_id == subscription.campaign_id,
         models.Subscriber.email == subscription.email
     ).first()
 
     if existing_subscriber:
-        # لا نطلق خطأ، فقط ننهي العملية. يمكن تعديل هذا السلوك لاحقًا.
         return
 
-    # 3. إنشاء المشترك الجديد في قاعدة البيانات
+    # 3. إنشاء المشترك الجديد وحفظه
     new_subscriber = models.Subscriber(
         email=subscription.email,
         campaign_id=subscription.campaign_id
     )
     db.add(new_subscriber)
     db.commit()
-    db.refresh(new_subscriber) # نحصل على بيانات المشترك الجديد من قاعدة البيانات
+    db.refresh(new_subscriber)
 
+   
     background_tasks.add_task(
         email_service.send_asset_email,
         to_email=new_subscriber.email,
@@ -74,12 +73,5 @@ def subscribe_to_campaign(
         asset_path=campaign.asset.file_path
     )
 
-    # 4. إرسال الإيميل الفعلي (بدلاً من جملة print)
-    email_service.send_asset_email(
-        to_email=new_subscriber.email,
-        asset_name=campaign.asset.name,
-        asset_path=campaign.asset.file_path
-    )
 
-    # لا نُرجع أي محتوى، فقط حالة نجاح
     return {"message": "Subscription request accepted"}
