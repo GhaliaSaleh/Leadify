@@ -14,10 +14,7 @@ def send_asset_email(to_email: str, asset_name: str, asset_path: str):
     message["From"] = sender_email
     message["To"] = to_email
 
-    # ---------------------------------------------------------
-    # التصحيح هنا: استخدام رابط السيرفر الحي (Render) بدلاً من Localhost
-    # ---------------------------------------------------------
-    # هذا هو الرابط الخاص بمشروعك الذي حصلنا عليه
+  
     base_url = "https://leadify-fkt3.onrender.com"
     
     # نقوم بتركيب الرابط الكامل
