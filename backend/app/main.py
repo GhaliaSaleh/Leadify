@@ -350,11 +350,11 @@ def delete_campaign(
 
     if campaign.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform requested action")
+
+    db.query(models.Subscriber).filter(models.Subscriber.campaign_id == campaign_id).delete(synchronize_session=False)
     
-    # Note: We need to decide what to do with subscribers of this campaign.
-    # For now, we will leave them, but in a real app we might delete them too (ON DELETE CASCADE).
-    
+    # الآن نحذف الحملة بأمان
     campaign_query.delete(synchronize_session=False)
     db.commit()
 
-    return
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
