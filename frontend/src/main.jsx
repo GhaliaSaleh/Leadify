@@ -5,7 +5,7 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { ChakraProvider } from '@chakra-ui/react';
 import App from './App.jsx';
 import './index.css';
-import theme from './theme.js'; // 1. استيراد الموضوع المخصص
+import theme from './theme.js'; 
 
 // نستدعي createRoot مرة واحدة فقط
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -20,20 +20,10 @@ import csv # لإنشاء ملفات CSV
 # models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-
-# Define the list of origins that are allowed to make requests
-origins = [
-    "http://localhost:5173", # The origin of our React app
-    "http://localhost:3000", # Another common port for React development
-    "http://127.0.0.1:5500",  # The Live Server for testing our widget
-    "http://localhost:5500",  # Just in case
-]
-
 # Add the CORS middleware to the application
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"], # Allow all methods (GET, POST, etc.)
     allow_headers=["*"], # Allow all headers
