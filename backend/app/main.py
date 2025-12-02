@@ -17,7 +17,7 @@ import csv # لإنشاء ملفات CSV
 
 # This line creates the database tables if they don't exist
 # We will use Alembic for this, so we can comment it out or remove it
-# models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 # Add the CORS middleware to the application
