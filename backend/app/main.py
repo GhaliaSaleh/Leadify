@@ -181,12 +181,9 @@ def create_campaign(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-       # --- هذا هو الكود الجديد الذي سنضيفه ---
-    # 1. التحقق من خطة المستخدم
     is_free_plan = (current_user.plan == models.PlanEnum.FREE)
 
     if is_free_plan:
-        # 2. حساب عدد الحملات الحالية
         campaign_count = db.query(models.Campaign).filter(models.Campaign.owner_id == current_user.id).count()
         
         # 3. فرض القيد
@@ -196,7 +193,6 @@ def create_campaign(
                 detail="لقد وصلت إلى الحد الأقصى لعدد الحملات (1) في الخطة المجانية. يرجى الترقية."
             )
         
-    # التحقق من ملكية الأصل (هذا الكود لم يتغير)
     asset_to_link = db.query(models.DigitalAsset).filter(
         models.DigitalAsset.id == campaign.asset_id,
         models.DigitalAsset.owner_id == current_user.id
@@ -208,12 +204,10 @@ def create_campaign(
             detail=f"Asset with id {campaign.asset_id} not found or you don't have permission."
         )
 
-    # تحويل كائن الإعدادات إلى نص JSON لتخزينه
     settings_str = None
     if campaign.settings:
         settings_str = campaign.settings.model_dump_json()
 
-    # إنشاء الحملة الجديدة مع الإعدادات كنص
     new_campaign = models.Campaign(
         name=campaign.name,
         asset_id=campaign.asset_id,
@@ -225,8 +219,7 @@ def create_campaign(
     db.commit()
     db.refresh(new_campaign)
     
-    # عند إرجاع البيانات، نقوم بتحويل نص الإعدادات مرة أخرى إلى كائن
-    # ليتوافق مع `response_model`
+
     if new_campaign.settings:
         new_campaign.settings = json.loads(new_campaign.settings)
 
@@ -251,30 +244,22 @@ def update_campaign(
     if db_campaign.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
 
-    # --- هذا هو المنطق الجديد والمحسن ---
     
-    # 1. نحصل على بيانات التحديث من الطلب
     update_data = campaign_update.model_dump(exclude_unset=True)
 
-    # 2. إذا كانت هناك إعدادات جديدة، ندمجها مع القديمة
     if "settings" in update_data and update_data["settings"] is not None:
-        # نحمل الإعدادات القديمة من قاعدة البيانات (إن وجدت)
         current_settings = {}
         if db_campaign.settings:
             current_settings = json.loads(db_campaign.settings)
         
-        # ندمج الإعدادات الجديدة فوق القديمة
         new_settings_data = {**current_settings, **update_data["settings"]}
         
-        # نحول الكائن المدمج النهائي إلى نص JSON
         update_data["settings"] = json.dumps(new_settings_data)
 
-    # 3. نقوم بتحديث قاعدة البيانات بالبيانات المدمجة
     campaign_query.update(update_data, synchronize_session=False)
     db.commit()
     db.refresh(db_campaign)
 
-    # 4. نقوم بفك الإعدادات قبل إرجاعها (كما فعلنا من قبل)
     if db_campaign.settings:
         db_campaign.settings = json.loads(db_campaign.settings)
 
@@ -336,12 +321,13 @@ def export_campaign_subscribers(
         headers={"Content-Disposition": f"attachment; filename=subscribers_campaign_{campaign_id}.csv"}
     )
 
-@app.delete("/campaigns/{campaign_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/campaigns/{campaign_id}") 
 def delete_campaign(
     campaign_id: int,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
+    # 1. البحث عن الحملة
     campaign_query = db.query(models.Campaign).filter(models.Campaign.id == campaign_id)
     campaign = campaign_query.first()
 
@@ -350,11 +336,12 @@ def delete_campaign(
 
     if campaign.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform requested action")
-
+    
+    # 2. حذف المشتركين أولاً
     db.query(models.Subscriber).filter(models.Subscriber.campaign_id == campaign_id).delete(synchronize_session=False)
     
-    # الآن نحذف الحملة بأمان
+    # 3. حذف الحملة
     campaign_query.delete(synchronize_session=False)
     db.commit()
 
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return {"message": "Campaign deleted successfully"}
