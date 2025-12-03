@@ -14,9 +14,6 @@ import io # للتعامل مع البيانات في الذاكرة
 import csv # لإنشاء ملفات CSV
 
 
-
-# This line creates the database tables if they don't exist
-# We will use Alembic for this, so we can comment it out or remove it
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -28,9 +25,6 @@ app.add_middleware(
     allow_methods=["*"], # Allow all methods (GET, POST, etc.)
     allow_headers=["*"], # Allow all headers
 )
-
-
-
 
 
 @app.post("/users/", response_model=schemas.UserOut)
@@ -125,20 +119,15 @@ def delete_asset(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    # 1. Find the asset query
     asset_query = db.query(models.DigitalAsset).filter(models.DigitalAsset.id == asset_id)
     asset = asset_query.first()
 
-    # 2. Check if the asset exists
     if not asset:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
 
-    # 3. Verify ownership
     if asset.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform requested action")
 
-    # 4. --- التحقق الجديد والمهم ---
-    # Check if the asset is used in any campaigns
     linked_campaign = db.query(models.Campaign).filter(models.Campaign.asset_id == asset_id).first()
     if linked_campaign:
         raise HTTPException(
@@ -146,7 +135,6 @@ def delete_asset(
             detail=f"لا يمكن حذف هذا العنصر. إنه مرتبط بحملة '{linked_campaign.name}'. يرجى حذف الحملة أولاً."
         )
     
-    # 5. (Optional) Delete the actual file
     import os
     try:
         if os.path.exists(asset.file_path):
@@ -154,7 +142,6 @@ def delete_asset(
     except Exception as e:
         print(f"Error deleting file {asset.file_path}: {e}")
 
-    # 6. Delete the asset record from the database
     asset_query.delete(synchronize_session=False)
     db.commit()
 
@@ -186,7 +173,6 @@ def create_campaign(
     if is_free_plan:
         campaign_count = db.query(models.Campaign).filter(models.Campaign.owner_id == current_user.id).count()
         
-        # 3. فرض القيد
         if campaign_count >= 1: # الحد الأقصى للخطة المجانية
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -266,14 +252,12 @@ def update_campaign(
     return db_campaign
 
 
-# === API to get subscribers for a specific campaign ===
 @app.get("/campaigns/{campaign_id}/subscribers", response_model=List[schemas.SubscriberOut])
 def get_campaign_subscribers(
     campaign_id: int,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    # First, verify the user owns the campaign
     campaign = db.query(models.Campaign).filter(
         models.Campaign.id == campaign_id,
         models.Campaign.owner_id == current_user.id
@@ -282,19 +266,16 @@ def get_campaign_subscribers(
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
-    # Get the subscribers for this campaign
     subscribers = db.query(models.Subscriber).filter(models.Subscriber.campaign_id == campaign_id).all()
     return subscribers
 
 
-# === API to export subscribers as a CSV file ===
 @app.get("/campaigns/{campaign_id}/subscribers/csv")
 def export_campaign_subscribers(
     campaign_id: int,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    # The same verification logic as above
     campaign = db.query(models.Campaign).filter(
         models.Campaign.id == campaign_id,
         models.Campaign.owner_id == current_user.id
@@ -305,16 +286,14 @@ def export_campaign_subscribers(
     
     subscribers = db.query(models.Subscriber).filter(models.Subscriber.campaign_id == campaign_id).all()
 
-    # Create a CSV in memory
     output = io.StringIO()
     writer = csv.writer(output)
     writer.writerow(['id', 'email', 'created_at']) # Header row
     for subscriber in subscribers:
         writer.writerow([subscriber.id, subscriber.email, subscriber.created_at.isoformat()])
     
-    output.seek(0) # Go back to the start of the in-memory file
+    output.seek(0) 
 
-    # Return the CSV file as a downloadable response
     return StreamingResponse(
         output,
         media_type="text/csv",
@@ -327,7 +306,6 @@ def delete_campaign(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-    # 1. البحث عن الحملة
     campaign_query = db.query(models.Campaign).filter(models.Campaign.id == campaign_id)
     campaign = campaign_query.first()
 
@@ -337,10 +315,8 @@ def delete_campaign(
     if campaign.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform requested action")
     
-    # 2. حذف المشتركين أولاً
     db.query(models.Subscriber).filter(models.Subscriber.campaign_id == campaign_id).delete(synchronize_session=False)
     
-    # 3. حذف الحملة
     campaign_query.delete(synchronize_session=False)
     db.commit()
 

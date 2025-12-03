@@ -1,12 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-// 1. استيراد الرابط الديناميكي
 import { BASE_URL } from '../config';
 
-// 2. إنشاء السياق
 const AuthContext = createContext(null);
 
-// 3. إنشاء المزوّد (Provider)
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
     token: localStorage.getItem('token') || null,
@@ -14,7 +11,6 @@ export const AuthProvider = ({ children }) => {
     isLoading: true,
   });
 
-  // 4. التأثير (Effect)
   useEffect(() => {
     const fetchUser = async () => {
       if (!authState.token) {
@@ -23,7 +19,6 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        // 5. استخدام BASE_URL
         const apiClient = axios.create({
           baseURL: BASE_URL,
           headers: { 'Authorization': `Bearer ${authState.token}` }
@@ -72,8 +67,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// ---------------------------------------------------------
-// ---------------------------------------------------------
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);

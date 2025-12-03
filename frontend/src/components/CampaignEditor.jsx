@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-// ---------------------------------------------------------
-// 1. استيراد الرابط الديناميكي من ملف الإعدادات
-// ---------------------------------------------------------
+
 import { BASE_URL } from '../config'; 
 
 import {
@@ -38,11 +36,9 @@ function CampaignEditor({ campaign, isOpen, onClose, onUpdate }) {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      // ---------------------------------------------------------
-      // 2. التصحيح هنا: استخدام BASE_URL بدلاً من الرابط الثابت
-      // ---------------------------------------------------------
+
       const apiClient = axios.create({ 
-          baseURL: BASE_URL, // <--- هنا التغيير المهم
+          baseURL: BASE_URL, 
           headers: { 'Authorization': `Bearer ${token}` } 
       });
       

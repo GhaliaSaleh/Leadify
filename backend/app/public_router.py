@@ -38,7 +38,6 @@ def subscribe_to_campaign(
     background_tasks: BackgroundTasks, 
     db: Session = Depends(get_db)
 ):
-    # 1. التحقق من وجود الحملة ونشاطها
     campaign = db.query(models.Campaign).filter(
         models.Campaign.id == subscription.campaign_id,
         models.Campaign.is_active == True
@@ -47,7 +46,6 @@ def subscribe_to_campaign(
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found or is not active")
 
-    # 2. التحقق مما إذا كان الإيميل مسجلاً من قبل
     existing_subscriber = db.query(models.Subscriber).filter(
         models.Subscriber.campaign_id == subscription.campaign_id,
         models.Subscriber.email == subscription.email
@@ -56,7 +54,6 @@ def subscribe_to_campaign(
     if existing_subscriber:
         return
 
-    # 3. إنشاء المشترك الجديد وحفظه
     new_subscriber = models.Subscriber(
         email=subscription.email,
         campaign_id=subscription.campaign_id

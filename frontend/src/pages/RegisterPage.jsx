@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-// ---------------------------------------------------------
-// 1. استيراد الرابط الديناميكي
-// ---------------------------------------------------------
+
 import { BASE_URL } from '../config';
 
-// استيراد مكونات Chakra UI
 import {
   Box, Button, FormControl, FormLabel, Input, Heading, Alert, AlertIcon, Link, Text, useToast
 } from '@chakra-ui/react';
@@ -16,7 +13,7 @@ function RegisterPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const toast = useToast(); // استخدام التنبيهات الحديثة
+  const toast = useToast(); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,12 +26,9 @@ function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // ---------------------------------------------------------
-      // 2. استخدام الرابط الحي (BASE_URL) هنا
-      // ---------------------------------------------------------
+    
       await axios.post(`${BASE_URL}/users/`, formData);
 
-      // 3. رسالة نجاح احترافية بدلاً من alert
       toast({
         title: "تم إنشاء الحساب بنجاح!",
         description: "يمكنك الآن تسجيل الدخول.",

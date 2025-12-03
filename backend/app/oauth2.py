@@ -9,7 +9,6 @@ from .database import get_db
 from . import models
 
 
-# This tells FastAPI where to get the token from
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def create_access_token(data: dict):

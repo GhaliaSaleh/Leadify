@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-// ---------------------------------------------------------
-// 1. استيراد الرابط الديناميكي
-// ---------------------------------------------------------
+
 import { BASE_URL } from '../config';
 
 import {
@@ -31,11 +29,9 @@ function UploadAssetForm({ onUploadSuccess }) {
     formData.append('file', file);
 
     try {
-      // ---------------------------------------------------------
-      // 2. استخدام الرابط الحي (BASE_URL) هنا
-      // ---------------------------------------------------------
+
       const apiClient = axios.create({ 
-          baseURL: BASE_URL, // <--- تم التصحيح
+          baseURL: BASE_URL, 
           headers: { 'Authorization': `Bearer ${token}` } 
       });
       

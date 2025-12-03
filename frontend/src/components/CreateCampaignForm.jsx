@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-// ---------------------------------------------------------
-// 1. استيراد الرابط الديناميكي
-// ---------------------------------------------------------
+
 import { BASE_URL } from '../config';
 
 import { 
@@ -32,11 +30,9 @@ function CreateCampaignForm({ assets, onSuccess, isDisabled }) {
     setError('');
     setIsSubmitting(true);
     try {
-      // ---------------------------------------------------------
-      // 2. استخدام الرابط الحي هنا
-      // ---------------------------------------------------------
+
       const apiClient = axios.create({ 
-          baseURL: BASE_URL, // <--- التغيير هنا
+          baseURL: BASE_URL,
           headers: { 'Authorization': `Bearer ${token}` } 
       });
       

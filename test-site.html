@@ -3,22 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع العميل التجريبي</title>
+    <title>تجربة نظام Leadify - نموذج حي</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; line-height: 1.6; background-color: #f0f2f5; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background-color: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #1a73e8; }
+        :root {
+            --primary-color: #4263EB;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: #333;
+            line-height: 1.8;
+        }
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-weight: bold; font-size: 1.5rem; color: var(--primary-color); }
+        
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .developer-zone {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px dashed #4a5568;
+            position: relative;
+        }
+        .developer-zone h3 { margin-top: 0; color: #63b3ed; }
+        .code-placeholder {
+            background: #1a202c;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            direction: ltr;
+            text-align: left;
+            margin-top: 15px;
+            color: #68d391;
+        }
+        .note { font-size: 0.9rem; color: #a0aec0; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>أهلاً بك في موقعي التجريبي</h1>
-        <p>هذا النص يمثل محتوى صفحة ويب عادية، مثل مقال أو صفحة رئيسية.</p>
-        <p>الـ Widget الخاص بتطبيق "leadify" يجب أن يظهر في هذه الصفحة بعد وضع الكود الخاص به.</p>
-        <p>اذهب إلى لوحة التحكم، انسخ كود التثبيت لحملة ما، والصقه هنا بالأسفل.</p>
-    </div>
-  
 
-<script src="https://leadify-app.netlify.app/widget.js" data-campaign-id="6" defer></script>
+    <header>
+        <div class="logo">موقعي التجريبي</div>
+        <nav>الرئيسية | مقالات | تواصل معنا</nav>
+    </header>
+
+    <div class="container">
+        <!-- محتوى الصفحة -->
+        <div class="content-card">
+            <h1>كيف تزيد مبيعاتك في 2025؟</h1>
+            <p>أهلاً بك في هذه الصفحة التجريبية.</p>
+            <p>تخيل أن هذا مقال قيّم يقرؤه الزائر الآن. هو مستمتع بالمحتوى، وفجأة... يجب أن تظهر له "فرصة" (Lead Magnet) لكي لا يخرج خالي الوفاض.</p>
+            <p>هنا يأتي دور نظام <strong>Leadify</strong>. بدلاً من أن يغادر الزائر، سيظهر له نموذج ذكي يعرض عليه كتاباً إلكترونياً أو خصماً مقابل بريده الإلكتروني.</p>
+            <p>👇 انظر للأسفل لتعرف كيفية التركيب.</p>
+        </div>
+
+        <div class="developer-zone">
+            <h3>🛠 منطقة المطور (Developer Zone)</h3>
+            <p>لكي يعمل النظام، يجب وضع "كود الجافاسكربت" الخاص بالحملة في هذا الملف.</p>
+            <p><strong>الخطوات:</strong></p>
+            <ol>
+                <li>اذهب إلى لوحة تحكم Leadify.</li>
+                <li>انسخ كود التثبيت (Install Code) الخاص بالحملة التي تريد تجربتها.</li>
+                <li>الصقه في هذا الملف (في الكود المصدري) مباشرة قبل إغلاق وسم <code>&lt;/body&gt;</code>.</li>
+            </ol>
+
+            <div class="code-placeholder">
+                &lt;!-- الصق الكود هنا بالأسفل --&gt;<br>
+                &lt;script src="..." data-campaign-id="..."&gt;&lt;/script&gt;
+            </div>
+            
+            <p class="note">ملاحظة: إذا قمت بضبط "تأخير زمني" (Delay) في إعدادات الحملة، يرجى الانتظار بضع ثوانٍ حتى تظهر النافذة.</p>
+        </div>
+    </div>
+
+    
+
+    <script src="https://leadify-app.netlify.app/widget.js" data-campaign-id="6" defer></script>
+
 </body>
 </html>

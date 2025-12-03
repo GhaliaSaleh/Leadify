@@ -7,10 +7,8 @@ import App from './App.jsx';
 import './index.css';
 import theme from './theme.js'; 
 
-// نستدعي createRoot مرة واحدة فقط
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-// ونستدعي render مرة واحدة فقط، مع تغليف كل المزودين بالترتيب الصحيح
 root.render(
   <React.StrictMode>
     <BrowserRouter>

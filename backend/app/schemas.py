@@ -44,8 +44,7 @@ class DigitalAssetOut(DigitalAssetBase):
     class Config:
         from_attributes = True
 
-# Schemas for Campaign (النسخة النهائية والمصححة)
-# ==================================
+
 class CampaignSettings(BaseModel):
     title: str = "احصل على هديتك المجانية!"
     button_text: str = "أرسل لي الآن"
@@ -63,7 +62,7 @@ class CampaignCreate(CampaignBase):
 class CampaignUpdate(BaseModel):
     name: str | None = None
     is_active: bool | None = None
-    settings: CampaignSettings | None = None # <-- هذا هو السطر الحاسم
+    settings: CampaignSettings | None = None 
 
 class CampaignOut(CampaignBase):
     id: int
@@ -87,7 +86,6 @@ class SubscriberOut(BaseModel):
         from_attributes = True
 
         
-# ... في قسم Campaign Schemas
 
 class CampaignUpdate(BaseModel):
     name: str | None = None

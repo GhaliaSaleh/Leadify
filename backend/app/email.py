@@ -17,7 +17,6 @@ def send_asset_email(to_email: str, asset_name: str, asset_path: str):
   
     base_url = "https://leadify-fkt3.onrender.com"
     
-    # نقوم بتركيب الرابط الكامل
     download_link = f"{base_url}/{asset_path}"
 
     # Create the HTML part of the message

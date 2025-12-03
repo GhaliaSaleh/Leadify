@@ -12,7 +12,7 @@ function InstallCodeModal({ isOpen, onClose, campaignId }) {
   }
 
  
-  // ---------------------------------------------------------
+  
   const origin = window.location.origin;
   
   const widgetCode = `<script src="${origin}/widget.js" data-campaign-id="${campaignId}" defer></script>`;

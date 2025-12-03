@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { Link as RouterLink } from "react-router-dom";
-// ---------------------------------------------------------
-// 1. استيراد الرابط الديناميكي
-// ---------------------------------------------------------
+
 import { BASE_URL } from '../config';
 
 // Chakra UI Imports
@@ -18,7 +16,7 @@ import UploadAssetForm from '../components/UploadAssetForm.jsx';
 import CreateCampaignForm from '../components/CreateCampaignForm.jsx';
 import SubscribersList from '../components/SubscribersList.jsx';
 import CampaignEditor from '../components/CampaignEditor.jsx';
-import InstallCodeModal from '../components/InstallCodeModal.jsx'; // استيراد المكون الجديد
+import InstallCodeModal from '../components/InstallCodeModal.jsx'; 
 
 function DashboardPage() {
   const { token, user } = useAuth();
@@ -33,7 +31,7 @@ function DashboardPage() {
   const toast = useToast();
   const { isOpen: isEditorOpen, onOpen: onEditorOpen, onClose: onEditorClose } = useDisclosure();
   const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
-  const { isOpen: isInstallOpen, onOpen: onInstallOpen, onClose: onInstallClose } = useDisclosure(); // حالات الـ Modal الجديد
+  const { isOpen: isInstallOpen, onOpen: onInstallOpen, onClose: onInstallClose } = useDisclosure();
   
   // State to manage which item is being processed
   const [selectedCampaign, setSelectedCampaign] = useState(null);
@@ -43,9 +41,7 @@ function DashboardPage() {
   // Memoized API client
   const apiClient = useCallback(() => {
     return axios.create({
-      // ---------------------------------------------------------
-      // 2. استخدام الرابط الحي (BASE_URL) هنا
-      // ---------------------------------------------------------
+
       baseURL: BASE_URL, 
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -72,7 +68,6 @@ function DashboardPage() {
     }
   }, [token, apiClient]);
 
-  // --- All Handler Functions ---
 
   const handleUploadSuccess = (newAsset) => {
     setAssets((prev) => [newAsset, ...prev]);
@@ -255,7 +250,6 @@ function DashboardPage() {
         ) : <Text>لم تقم برفع أي محتوى بعد.</Text>}
       </VStack>
 
-      {/* --- Modals --- */}
       <CampaignEditor 
         campaign={selectedCampaign}
         isOpen={isEditorOpen}

@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-// ---------------------------------------------------------
-// 1. استيراد الرابط الديناميكي
-// ---------------------------------------------------------
+
 import { BASE_URL } from '../config';
 
 import {
@@ -42,9 +40,7 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      // ---------------------------------------------------------
-      // 2. استخدام الرابط الحي (BASE_URL) هنا
-      // ---------------------------------------------------------
+   
       const response = await axios.post(
         `${BASE_URL}/login`, // <--- تم التصحيح
         new URLSearchParams(formData),

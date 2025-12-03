@@ -1,6 +1,5 @@
 import React from 'react';
 
-// استيراد مكونات Chakra الخاصة بالجداول والأزرار
 import {
   Box,
   Button,
