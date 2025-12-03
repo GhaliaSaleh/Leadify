@@ -37,15 +37,21 @@ def send_asset_email(to_email: str, asset_name: str, asset_path: str):
     # Attach the HTML to the message
     part = MIMEText(html, "html")
     message.attach(part)
-
+    
     try:
-        # Connect to the Gmail SMTP server and send the email
-        with smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT) as server:
-            server.starttls()  # Secure the connection
+        print(f"🔌 Connecting to Gmail SMTP Server (SSL) on port {settings.SMTP_PORT}...")
+        
+        with smtplib.SMTP_SSL(settings.SMTP_SERVER, settings.SMTP_PORT) as server:
+            
+            print("🔐 Logging in...")
             server.login(sender_email, sender_password)
+            
+            print("📤 Sending email...")
             server.sendmail(sender_email, to_email, message.as_string())
-        print(f"Email sent successfully to {to_email} via SMTP.")
+        
+        print(f"✅ Email sent successfully to {to_email}")
         return True
+        
     except Exception as e:
-        print(f"Failed to send email via SMTP: {e}")
+        print(f"❌ FAILED TO SEND EMAIL: {e}")
         return False
